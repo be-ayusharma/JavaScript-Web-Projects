@@ -2,48 +2,50 @@ const quoteContainer = document.getElementById("quote-container");
 const quoteText = document.getElementById("quote");
 const authorText = document.getElementById("author");
 const twitterBtn = document.getElementById("twitter");
-const newQuoteBtn = document.getElementsByClassName("new-quote");
+const newQuoteBtn = document.querySelector(".new-quote");
 
 let apiQuotes = [];
 
-// Show New Quotes
+// Show New Quote
 function newQuote() {
-  //Pick A Random Quote From APIQuote Array
-
   const quote = apiQuotes[Math.floor(Math.random() * apiQuotes.length)];
 
-  //Check If Author Field Is Empty Fill It With "Unknown"
-  if (!quote.author) {
-    authorText.textContent = "Unknown";
-  } else {
-    authorText.textContent = quote.author;
-  }
-  //Check Quote Length To Determine Styling
-  if (quote.text.length > 50) {
+  authorText.textContent = quote.author ? quote.author : "Unknown";
+
+  // Add styling for long quotes
+  if (quote.quote.length > 50) {
     quoteText.classList.add("long-quote");
   } else {
     quoteText.classList.remove("long-quote");
   }
-  quoteText.textContent = quote.text;
+
+  quoteText.textContent = quote.quote;
 }
 
 // Get Quotes From API
-
 async function getQuotes() {
-  const apiUrl = `https://f3217d7d-f010-415f-bbca-ec164d1a832b.mock.pstmn.io/quote/1`;
+  const apiUrl = `https://dummyjson.com/quotes`;
   try {
     const response = await fetch(apiUrl);
-    apiQuotes = await response.json();
-    newQuote();
+    const data = await response.json();
+    apiQuotes = data.quotes; // Extract quotes array
+    newQuote(); // Show a quote
   } catch (error) {
-    console.error("Something Went Wrong");
+    console.error("Something Went Wrong", error);
   }
 }
 
-//Tweet Quote
+// Tweet Quote
+function tweetQuote() {
+  const quote = quoteText.textContent;
+  const author = authorText.textContent;
+  // const twitterUrl = https://twitter.com/intent/tweet?text="${quote}" - ${author};
+  // window.open(twitterUrl, "_blank");
+}
 
-function tweetQuote() {}
+// Event Listeners
+newQuoteBtn.addEventListener("click", newQuote);
+twitterBtn.addEventListener("click", tweetQuote);
 
 // On Load
-
 getQuotes();
